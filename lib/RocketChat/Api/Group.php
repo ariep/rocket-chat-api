@@ -31,7 +31,6 @@ class Group extends AbstractApi
         return null;
     }
 
-
     public function sendMessage($id, $message)
     {
         $result = $this->post("chat.postMessage", [ 'roomId' => $id, 'text' => $message]);
@@ -45,4 +44,33 @@ class Group extends AbstractApi
 
     }
     
+    public function listRooms()
+    {
+        $result = (object)[
+            'groups' => array(),
+            'total' => 0,
+            'count' => 0,
+            'success' =>1,
+        ];
+
+        $offset=0;
+
+        do
+        {
+            $partial = $this->get("groups.list?count=100&offset={$offset}");
+
+            if (!$this->status)
+            {
+                return null;
+            }
+
+            $result->total = (int) $partial->total;
+            $result->groups = array_merge($result->groups, $partial->groups);
+            $offset+=(int) $partial->count;
+        }
+        while( count($result->groups) < $result->total);
+
+        return $result;
+    }
+
 }
