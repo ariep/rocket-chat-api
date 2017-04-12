@@ -73,4 +73,30 @@ class Group extends AbstractApi
         return $result;
     }
 
+    public function history($id, $from = null, $to = null, $count = 100)
+    {
+        $params = array('roomId' => $id, 'count' => $count);
+        if (! is_null($from))
+        {
+            $params['from'] = $from;
+        }
+        if (! is_null($to))
+        {
+            $params['to'] = $to;
+        }
+        $queryParts = array();
+        foreach($params as $k => $v)
+        {
+            $queryParts[] = $k . '=' . $v;
+        }
+        $query = implode('&', $queryParts);
+        $result = $this->get('groups.history?' . $query);
+
+        if ($this->status)
+        {
+            return $result;
+        }
+
+        return null;
+    }
 }
