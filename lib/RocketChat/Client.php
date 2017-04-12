@@ -94,6 +94,7 @@ class Client
         'user'    => 'User',
         'channel' => 'Channel',
         'group'   => 'Group',
+        'chat'    => 'Chat',
     );
 
     /**
