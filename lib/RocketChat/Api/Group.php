@@ -41,7 +41,6 @@ class Group extends AbstractApi
         }
 
         return null;
-
     }
     
     public function listRooms()
@@ -71,6 +70,30 @@ class Group extends AbstractApi
         while( count($result->groups) < $result->total);
 
         return $result;
+    }
+
+    public function addMember($roomID, $userID)
+    {
+        $result = $this->post("groups.invite", [ 'roomId' => $roomID, 'userId' => $userID]);
+
+        if ($this->status)
+        {
+            return $result;
+        }
+
+        return null;
+    }
+
+    public function removeMember($roomID, $userID)
+    {
+        $result = $this->post("groups.kick", [ 'roomId' => $roomID, 'userId' => $userID]);
+
+        if ($this->status)
+        {
+            return $result;
+        }
+
+        return null;
     }
 
     public function history($id, $from = null, $to = null, $count = 100)
