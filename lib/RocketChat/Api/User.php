@@ -10,7 +10,8 @@ namespace RocketChat\Api;
  */
 class User extends AbstractApi
 {
-    private $userList = null;
+    private $usersByName = null;
+    private $usersByID   = null;
 
     /**
      * Returns tokens for user
@@ -36,9 +37,9 @@ class User extends AbstractApi
     {
         $this->populateUserList();
 
-        if (array_key_exists($username, $this->userList))
+        if (array_key_exists($username, $this->usersByName))
         {
-            return $this->userList[$username];
+            return $this->usersByName[$username];
         }
         else
         {
@@ -46,9 +47,30 @@ class User extends AbstractApi
         }
     }
 
+    public function fromID($ID)
+    {
+        $this->populateUserList();
+
+        if (array_key_exists($ID, $this->usersByID))
+        {
+            return $this->usersByID[$ID];
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public function listAll()
+    {
+        $this->populateUserList();
+
+        return $this->userList;
+    }
+
     private function populateUserList()
     {
-        if (! is_null($this->userList))
+        if (! is_null($this->usersByID))
         {
             return;
         }
@@ -73,12 +95,14 @@ class User extends AbstractApi
         }
         while( count($result->users)< $result->total);
 
-        $this->userList = array();
+        $this->usersByID = array();
+        $this->usersByName = array();
         foreach ($result->users as $user)
         {
             if (isset($user->username))
             {
-                $this->userList[$user->username] = $user;
+                $this->usersByName[$user->username] = $user;
+                $this->usersByID[$user->_id] = $user;
             }
         }
     }
