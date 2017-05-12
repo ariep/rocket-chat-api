@@ -72,6 +72,23 @@ class Group extends AbstractApi
         return $result;
     }
 
+    public function findByName($name)
+    {
+        $result = $this->listRooms();
+        if ($result)
+        {
+            foreach($result->groups as $room)
+            {
+                if ($room->name == $name)
+                {
+                    return $room;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public function addMember($roomID, $userID)
     {
         $result = $this->post("groups.invite", [ 'roomId' => $roomID, 'userId' => $userID]);
