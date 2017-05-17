@@ -33,6 +33,33 @@ class User extends AbstractApi
         return null;
     }
 
+    /**
+     * Create a new user
+     *
+     * @param string $username the username of the user
+     * @param string $password the password of the user
+     * @param string $name     the display name of the user
+     * @param string $email    the email address of the user
+     *
+     * @return the new user's data
+     */
+    public function create($username, $password, $name, $email)
+    {
+        $result = $this->post('users.create', [
+            'username'=>$username,
+            'password'=>$password,
+            'name'=>$name,
+            'email'=>$email
+        ]);
+
+        if ($this->status)
+        {
+            return $result->user;
+        }
+
+        return null;
+    }
+
     public function lookup($username)
     {
         $this->populateUserList();
