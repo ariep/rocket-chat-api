@@ -40,17 +40,17 @@ class User extends AbstractApi
      * @param string $password the password of the user
      * @param string $name     the display name of the user
      * @param string $email    the email address of the user
+     * @param array  $params   extra parameters for rocketchat api call
      *
      * @return the new user's data
      */
-    public function create($username, $password, $name, $email)
+    public function create($username, $password, $name, $email, $params = array())
     {
-        $result = $this->post('users.create', [
-            'username'=>$username,
-            'password'=>$password,
-            'name'=>$name,
-            'email'=>$email
-        ]);
+        $params['username'] = $username;
+        $params['password'] = $password;
+        $params['name'] = $name;
+        $params['email'] = $email;
+        $result = $this->post('users.create', $params);
 
         if ($this->status)
         {
