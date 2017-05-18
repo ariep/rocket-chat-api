@@ -400,7 +400,7 @@ class Client
      *
      * @return resource a cURL handle on success, <b>FALSE</b> on errors.
      */
-    public function prepareRequest($path, $method = 'GET', $data = array())
+    public function prepareRequest($path, $method = 'GET', $data = null)
     {
         $this->responseCode = null;
         $this->curlOptions = array();
@@ -426,10 +426,16 @@ class Client
             $this->setCurlOption(CURLOPT_SSLVERSION, $this->sslVersion);
         }
 
-        // Additional request headers
-        $httpHeader = array(
-            'Content-Type: application/x-www-form-urlencoded'
-        );
+        $httpHeader = array();
+
+        if (! is_null($data))
+        {
+            $data = json_encode($data);
+
+            // Additional request headers
+            $httpHeader[] = 'Content-Type: application/json';
+            $httpHeader[] = 'Content-Length: ' . strlen($data);
+        }
 
         if ($this->authToken && $this->authUserId) {
             $httpHeader[] = 'X-Auth-Token: '.$this->authToken;
@@ -439,21 +445,16 @@ class Client
         // Set the HTTP request headers
         $this->setCurlOption(CURLOPT_HTTPHEADER, $httpHeader);
 
-        if (isset($data))
-        {
-            $data = http_build_query($data);
-        }
-
         switch ($method) {
             case 'POST':
                 $this->setCurlOption(CURLOPT_POST, 1);
-                if (isset($data)) {
+                if (! is_null($data)) {
                     $this->setCurlOption(CURLOPT_POSTFIELDS, $data);
                 }
                 break;
             case 'PUT':
                 $this->setCurlOption(CURLOPT_CUSTOMREQUEST, 'PUT');
-                if (isset($data)) {
+                if (! is_null($data)) {
                     $this->setCurlOption(CURLOPT_POSTFIELDS, $data);
                 }
                 break;
@@ -511,7 +512,7 @@ class Client
      *
      * @return bool|SimpleXMLElement|string
      */
-    protected function runRequest($path, $method = 'GET', $data = array())
+    protected function runRequest($path, $method = 'GET', $data = null)
     {
         $curl = $this->prepareRequest($path, $method, $data);
         
