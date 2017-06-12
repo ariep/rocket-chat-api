@@ -92,7 +92,7 @@ class User extends AbstractApi
     {
         $this->populateUserList();
 
-        return $this->userList;
+        return $this->usersByName;
     }
 
     private function populateUserList()
