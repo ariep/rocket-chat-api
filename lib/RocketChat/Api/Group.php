@@ -31,9 +31,11 @@ class Group extends AbstractApi
         return null;
     }
 
-    public function sendMessage($id, $message)
+    public function sendMessage($id, $message, $attachments = array(), $options = array())
     {
-        $result = $this->post("chat.postMessage", [ 'roomId' => $id, 'text' => $message]);
+        $params = [ 'roomId' => $id, 'text' => $message, 'attachments' => $attachments];
+        $params = array_merge($params, $options);
+        $result = $this->post('chat.postMessage', $params);
 
         if ($this->status)
         {
